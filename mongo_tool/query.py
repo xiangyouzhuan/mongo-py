@@ -1,12 +1,21 @@
+import configparser
+from pathlib import Path
 import pymongo
-from happy_python import HappyLog
-from happy_python.happy_log import HappyLogLevel
 
-client = pymongo.MongoClient()
+conf_dir = Path(__file__).parent.parent / 'conf'
+app_conf_file = conf_dir / 'config.ini'
+cfg = configparser.ConfigParser()
+cfg.read(app_conf_file)
+ip = cfg['mongo']['ip']
+port = int(cfg['mongo']['port'])
+
+client = pymongo.MongoClient(host=ip, port=port)
 db = client['test']
 collection = db['students']
-result = collection.find({})
-collection.find_one()
 
 
-print(result)
+def query(filter):
+    # cursor = collection.find({"age": {"$gt": 18}})
+    filter = eval(filter)
+    cursor = collection.find(filter)
+    return cursor

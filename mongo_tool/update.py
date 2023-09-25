@@ -11,8 +11,16 @@ student = {
     'gender': 'male'
 }
 
-condition = {'name': 'Jordan'}
-student = collection.find_one(condition)
-result = collection.update_one(condition,{"$set":{"age":21}})
-print(result)
+# condition = {'name': 'Jordan'}
+# student = collection.find_one(condition)
+# result = collection.update_one({'name': 'Jordan'},{"$set":{"age":22}})
+
+
+def updateOne(filter,json):
+    filter = eval(filter)
+    json = '{"$set": ' + json + '}'
+    json = eval(json)
+    result = collection.update_many(filter, json)
+    return result
+
 

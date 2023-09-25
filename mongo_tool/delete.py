@@ -1,17 +1,23 @@
+import configparser
+from pathlib import Path
 import pymongo
 
-client = pymongo.MongoClient('mongodb://192.168.122.52:27017/')
+conf_dir = Path(__file__).parent.parent / 'conf'
+app_conf_file = conf_dir / 'config.ini'
+cfg = configparser.ConfigParser()
+cfg.read(app_conf_file)
+ip = cfg['mongo']['ip']
+port = int(cfg['mongo']['port'])
+
+
+client = pymongo.MongoClient(host=ip, port=port)
 db = client['test']
 collection = db['students']
 
-student = {
-    'id': '20170102',
-    'name': 'Jordan',
-    'age': 20,
-    'gender': 'male'
-}
 
-result = collection.delete_one({'id':'20170102'})
-# result = collection.count_documents({})
-print(result)
+def deleteMany(filter):
+    filter = eval(filter)
+    exist = collection.find_one(filter)
+    result = collection.delete_many(filter)
+    return result
 
